@@ -9,13 +9,16 @@
     "dev": "node ./server.js",
     "start": "cross-env NODE_ENV=production node ./server.js",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
-    "lint:fix": "eslint . --fix --ext js,jsx --report-unused-disable-directives --max-warnings 0"
+    "lint:fix": "eslint . --fix --ext js,jsx --report-unused-disable-directives --max-warnings 0",
+    "db:migrate": "prisma migrate dev --name init",
+    "db:view": "prisma studio"
   },
   "keywords": [],
   "type": "module",
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@prisma/client": "^5.11.0",
     "@remix-run/express": "^2.8.1",
     "@remix-run/node": "^2.8.1",
     "@remix-run/react": "^2.8.1",
@@ -32,6 +35,7 @@
     "@types/react": "^18.2.67",
     "@types/react-dom": "^18.2.22",
     "eslint": "^8.57.0",
+    "prisma": "^5.11.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.3",
     "vite": "^5.2.2"
