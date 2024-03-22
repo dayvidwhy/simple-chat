@@ -10,6 +10,8 @@ module.exports = {
     "rules": {
         "indent": ["error", 4],
         "quotes": ["error", "double"],
-        "semi": ["error", "always"]
+        "semi": ["error", "always"],
+        "no-extra-semi": "off",
+        "@typescript-eslint/no-extra-semi": "off"
     }
 };
