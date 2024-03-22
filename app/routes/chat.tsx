@@ -5,16 +5,15 @@ import { db } from "../utils/database.server";
 
 export async function loader() {
     const chats = await db.chat.findMany();
-    console.log(chats);
     return json(chats);
 }
 
 export default function Chat () {
     const chats = useLoaderData<typeof loader>();
     return (
-        <div className="container flex flex-row h-full">
+        <main className="container flex flex-row h-full">
             <div className="w-1/4">
-                <div className="p-2 w-full">
+                <aside className="p-2 w-full">
                     <Form method="post" action="/chat" className="flex w-full">
                         <input type="text" name="topic" className="p-2 text-xs w-1/2 mr-1 border-2 rounded" />
                         <button type="submit" className="bg-blue-500 w-1/2 text-xs hover:bg-blue-700 text-white font-bold py-2 rounded">
@@ -28,19 +27,19 @@ export default function Chat () {
                             </li>
                         ))}
                     </ul>
-                </div>
+                </aside>
             </div>
             <div className="w-3/4">
                 <div className="p-2">
                     <Outlet />
                 </div>
             </div>
-        </div>
+        </main>
     );
 };
 
 export async function action({
-    request,
+    request
 }: ActionFunctionArgs) {
     const data = await request.formData();
     console.log("In action", data.get("topic"));

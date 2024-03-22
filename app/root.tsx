@@ -4,11 +4,9 @@ import {
     Outlet,
     Scripts,
 } from "@remix-run/react";
-
 import type { LinksFunction } from "@remix-run/node";
 
 import stylesheet from "./tailwind.css?url";
-
 import { Navigation } from "./components/navigation";
 
 export const links: LinksFunction = () => [
@@ -25,10 +23,9 @@ export default function App() {
             <body className="h-full">
                 <Navigation />
                 <Outlet />
-  
                 <Scripts />
             </body>
         </html>
     );
-}
+};
   
