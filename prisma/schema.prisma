@@ -17,8 +17,9 @@ model Chat {
 }
 
 model Message {
-  id      String @id @default(cuid())
-  content String
-  chatId  String
-  chat    Chat   @relation(fields: [chatId], references: [id])
+  id        String @id @default(cuid())
+  content   String
+  chatId    String
+  createdAt DateTime @default(now())
+  chat      Chat   @relation(fields: [chatId], references: [id])
 }

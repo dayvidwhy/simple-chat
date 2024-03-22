@@ -12,7 +12,7 @@ import { Navigation } from "./components/navigation";
 export const links: LinksFunction = () => [
     { rel: "stylesheet", href: stylesheet },
 ];
-  
+
 export default function App() {
     return (
         <html className="h-full">
@@ -20,12 +20,13 @@ export default function App() {
                 <Meta />
                 <Links />
             </head>
-            <body className="h-full">
-                <Navigation />
-                <Outlet />
-                <Scripts />
+            <body className="h-full p-2">
+                <div className="container mx-auto border-2 border-zinc-400 rounded-lg h-full flex flex-col">
+                    <Navigation />
+                    <Outlet />
+                    <Scripts />
+                </div>
             </body>
         </html>
     );
 };
-  

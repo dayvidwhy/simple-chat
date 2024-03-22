@@ -1,7 +1,10 @@
-import { useLoaderData, Form } from "@remix-run/react";
+import { useLoaderData, Form, useActionData } from "@remix-run/react";
 import type { ActionFunctionArgs } from "@remix-run/node";
+import { json } from "@remix-run/node";
+import { useRef, useEffect } from "react";
 
 import { db } from "../utils/database.server";
+import { Message } from "../components/message";
 
 export async function loader({
     params
@@ -27,27 +30,6 @@ export async function loader({
     };
 };
 
-export default function ChatId() {
-    const { topic, chatId, messages } = useLoaderData<typeof loader>();
-    return (
-        <section className="border-2 p-2 mr-2">
-            <h3>{topic}</h3>
-            {messages.map((message) => (
-                <p key={message.id} className="p-2 border-b-2">
-                    {message.content}
-                </p>
-            ))}
-            <Form method="post" action={`/chat/${chatId}`} className="flex w-full pt-2">
-                <input type="text" name="message" className="p-2 text-xs mr-1 border-2 rounded w-full" />
-                <input type="hidden" name="chatId" value={chatId} />
-                <button type="submit" className="bg-blue-500 w-24 text-xs hover:bg-blue-700 text-white font-bold py-2 rounded">
-                    Send
-                </button>
-            </Form>
-        </section>
-    );
-};
-
 export async function action({
     request
 }: ActionFunctionArgs) {
@@ -64,5 +46,39 @@ export async function action({
         },
     });
 
-    return null;
+    return json({
+        ok: true
+    });
 }
+
+export default function ChatId() {
+    const { topic, chatId, messages } = useLoaderData<typeof loader>();
+    const actionData = useActionData<typeof action>();
+    const form = useRef<HTMLFormElement>(null);
+    useEffect(() => {
+        console.log("In effect", actionData);
+        if (actionData?.ok) {
+            form.current?.reset();
+        }
+    }, [actionData]);
+
+    return (
+        <>
+            <div>
+                <h3>{topic}</h3>
+                <ul>
+                    {messages.map((message) => (
+                        <Message key={message.id} message={message} />
+                    ))}
+                </ul>
+            </div>
+            <Form ref={form} method="post" action={`/chat/${chatId}`} className="flex w-full pt-2">
+                <input type="text" name="message" className="p-2 text-xs mr-1 border-2 rounded w-full" />
+                <input type="hidden" name="chatId" value={chatId} />
+                <button type="submit" className="bg-blue-500 w-24 text-sm hover:bg-blue-700 text-white font-bold py-2 rounded">
+                    Send
+                </button>
+            </Form>
+        </>
+    );
+};
