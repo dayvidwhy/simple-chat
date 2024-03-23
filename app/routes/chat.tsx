@@ -2,6 +2,7 @@ import { Outlet, useLoaderData, Form } from "@remix-run/react";
 import { json } from "@remix-run/node";
 import type { ActionFunctionArgs } from "@remix-run/node";
 import { db } from "../utils/database.server";
+import { Plus } from "lucide-react";
 
 export async function loader() {
     const chats = await db.chat.findMany();
@@ -12,22 +13,22 @@ export default function Chat () {
     const chats = useLoaderData<typeof loader>();
     return (
         <>
-            <aside className="w-1/6 p-2 h-full flex flex-col">
+            <aside className="w-2/12 p-2 h-full flex flex-col">
                 <Form method="post" action="/chat" className="flex w-full">
                     <input type="text" name="topic" className="p-2 text-xs w-full mr-1 border-2" />
-                    <button type="submit" className="bg-blue-500 w-fit-content pl-2 pr-2 text-xs hover:bg-blue-700 text-white font-bold rounded">
-                        Create    
+                    <button type="submit" className="bg-blue-500 w-fit px-2 hover:bg-blue-700 text-white rounded">
+                        <Plus />    
                     </button>
                 </Form>
                 <ul className="m-1 overflow-y-scroll w-full">
                     {chats.map((chat) => (
-                        <li className="p-2 mb-2 border-b-2" key={chat.id}>
+                        <li className="p-2 cursor-pointer text-slate-400 hover:text-slate-800" key={chat.id}>
                             <a href={`/chat/${chat.id}`}>#{chat.topic}</a>
                         </li>
                     ))}
                 </ul>
             </aside>
-            <section className="w-4/6 h-full flex flex-col border-l-2 border-zinc-400 justify-between p-2">
+            <section className="w-9/12 h-full flex flex-col border-l-2 border-zinc-400 justify-between p-2">
                 <Outlet />
             </section>
         </>
