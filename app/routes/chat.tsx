@@ -1,8 +1,9 @@
-import { Outlet, useLoaderData, Form } from "@remix-run/react";
+import { Outlet, useLoaderData, Form, Link } from "@remix-run/react";
 import { json } from "@remix-run/node";
 import type { ActionFunctionArgs } from "@remix-run/node";
 import { db } from "../utils/database.server";
 import { Plus } from "lucide-react";
+
 
 export async function loader() {
     const chats = await db.chat.findMany();
@@ -20,15 +21,15 @@ export default function Chat () {
                         <Plus />    
                     </button>
                 </Form>
-                <ul className="m-1 overflow-y-scroll w-full">
+                <ul className="m-1 overflow-y-auto w-full">
                     {chats.map((chat) => (
-                        <li className="p-2 cursor-pointer text-slate-400 hover:text-slate-800" key={chat.id}>
-                            <a href={`/chat/${chat.id}`}>#{chat.topic}</a>
+                        <li className="cursor-pointer text-slate-400 hover:text-slate-800 mb-2" key={chat.id}>
+                            <Link className="block" to={`/chat/${chat.id}`}>#{chat.topic}</Link>
                         </li>
                     ))}
                 </ul>
             </aside>
-            <section className="w-9/12 h-full flex flex-col border-l-2 border-zinc-400 justify-between p-2">
+            <section className="w-9/12 h-full flex flex-col border-l-2 border-zinc-400 justify-between">
                 <Outlet />
             </section>
         </>
