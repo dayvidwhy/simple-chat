@@ -64,8 +64,8 @@ export default function ChatId() {
 
     return (
         <>
-            <h3 className="text-2xl">{topic}</h3>
-            <ul className="overflow-y-scroll">
+            <h3 className="text-2xl">#{topic}</h3>
+            <ul className="overflow-y-scroll h-full">
                 {messages.map((message) => (
                     <Message key={message.id} message={message} />
                 ))}
