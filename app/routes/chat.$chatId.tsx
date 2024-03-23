@@ -11,9 +11,9 @@ import { useRef, useEffect } from "react";
 import { SendHorizonal } from "lucide-react";
 
 // local libs
-import { db } from "../utils/database.server";
-import { Message } from "../components/message";
-import { useSocket } from "../context";
+import { db } from "@/utils/database.server";
+import { Message } from "@/components/message";
+import { useSocket } from "@/context";
 
 export async function loader({
     params

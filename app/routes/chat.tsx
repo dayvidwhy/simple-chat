@@ -1,7 +1,7 @@
 import { Outlet, useLoaderData, Form, Link } from "@remix-run/react";
 import { json } from "@remix-run/node";
 import type { ActionFunctionArgs } from "@remix-run/node";
-import { db } from "../utils/database.server";
+import { db } from "@/utils/database.server";
 import { Plus } from "lucide-react";
 
 

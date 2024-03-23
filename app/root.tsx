@@ -11,9 +11,9 @@ import type { Socket } from "socket.io-client";
 import io from "socket.io-client";
 
 // local libs
-import { Navigation } from "./components/navigation";
-import { SocketProvider } from "./context";
-import stylesheet from "./tailwind.css?url";
+import { Navigation } from "@/components/navigation";
+import { SocketProvider } from "@/context";
+import stylesheet from "@/tailwind.css?url";
 
 export const links: LinksFunction = () => [
     { rel: "stylesheet", href: stylesheet },
