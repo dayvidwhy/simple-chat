@@ -40,7 +40,6 @@ export async function action({
     request
 }: ActionFunctionArgs) {
     const data = await request.formData();
-    console.log("In action", data.get("topic"));
     await db.chat.create({
         data: {
             topic: data.get("topic") as string,

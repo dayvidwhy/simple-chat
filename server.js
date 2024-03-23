@@ -1,5 +1,10 @@
+// remix server
 import { createRequestHandler } from "@remix-run/express";
+
+// server libs
 import express from "express";
+import { Server } from "socket.io";
+import { createServer } from "http";
 
 const viteDevServer =
   process.env.NODE_ENV === "production"
@@ -17,6 +22,25 @@ app.use(
         : express.static("build/client")
 );
 
+// create http server from express
+const httpServer = createServer(app);
+
+// attach socket.io server to http server
+const io = new Server(httpServer);
+
+// listen for the client connecting to the WS server
+io.on("connection", (socket) => {
+    // inside WS connection per client
+    console.log(socket.id, "connected");
+    socket.emit("confirmation", "connected!");
+
+    // when we get a message, relay to other clients
+    socket.on("message", (data) => {
+        console.log("Received message: ", data.message);
+        socket.broadcast.emit("message", data.message);
+    });
+});
+
 const build = viteDevServer
     ? () =>
         viteDevServer.ssrLoadModule(
@@ -26,6 +50,10 @@ const build = viteDevServer
 
 app.all("*", createRequestHandler({ build }));
 
-app.listen(3000, () => {
-    console.log("App listening on http://localhost:3000");
+const PORT = process.env.PORT || 3000;
+
+// instead of running listen on the Express app, do it on the HTTP server
+httpServer.listen(PORT, () => {
+    console.log(`Express server listening on port ${PORT}`);
 });
+  

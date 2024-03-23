@@ -1,3 +1,4 @@
+// libs
 import {
     Links,
     Meta,
@@ -5,8 +6,13 @@ import {
     Scripts,
 } from "@remix-run/react";
 import type { LinksFunction } from "@remix-run/node";
-import { Navigation } from "./components/navigation";
+import { useEffect, useState } from "react";
+import type { Socket } from "socket.io-client";
+import io from "socket.io-client";
 
+// local libs
+import { Navigation } from "./components/navigation";
+import { SocketProvider } from "./context";
 import stylesheet from "./tailwind.css?url";
 
 export const links: LinksFunction = () => [
@@ -14,6 +20,23 @@ export const links: LinksFunction = () => [
 ];
 
 export default function App() {
+    // setup socket to provide to context
+    const [socket, setSocket] = useState<Socket>();
+    useEffect(() => {
+        const socket = io();
+        setSocket(socket);
+        return () => {
+            socket.close();
+        };
+    }, []);
+    
+    useEffect(() => {
+        if (!socket) return;
+        socket.on("confirmation", (data) => {
+            console.log(data);
+        });
+    }, [socket]);
+
     return (
         <html className="h-full">
             <head>
@@ -24,7 +47,9 @@ export default function App() {
                 <div className="container mx-auto border-2 border-zinc-400 rounded-lg h-full">
                     <main className="flex h-full">
                         <Navigation />
-                        <Outlet />
+                        <SocketProvider socket={socket}>
+                            <Outlet />
+                        </SocketProvider>
                     </main>
                     <Scripts />
                 </div>

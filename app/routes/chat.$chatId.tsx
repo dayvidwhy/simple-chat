@@ -1,12 +1,19 @@
-import { useLoaderData, Form, useActionData } from "@remix-run/react";
+// libs
+import {
+    useLoaderData,
+    Form,
+    useActionData,
+    useRevalidator
+} from "@remix-run/react";
 import type { ActionFunctionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { useRef, useEffect } from "react";
-
 import { SendHorizonal } from "lucide-react";
 
+// local libs
 import { db } from "../utils/database.server";
 import { Message } from "../components/message";
+import { useSocket } from "../context";
 
 export async function loader({
     params
@@ -54,14 +61,31 @@ export async function action({
 
 export default function ChatId() {
     const { topic, chatId, messages } = useLoaderData<typeof loader>();
-    const actionData = useActionData<typeof action>();
 
+    // listen to new messages
+    const socket = useSocket();
+    const revalidator = useRevalidator();
+    useEffect(() => {
+        if (!socket) return;
+        socket.on("message", (data) => {
+            console.log("New message", data);
+            revalidator.revalidate();
+        });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [socket]);
+    
     // Reset the form after a successful submission
     const form = useRef<HTMLFormElement>(null);
+    const actionData = useActionData<typeof action>();
     useEffect(() => {
         if (actionData?.ok) {
+            if (form.current !== null) {
+                const formData = new FormData(form.current);
+                socket?.emit("message", { chatId, message: formData.get("message") });
+            }
             form.current?.reset();
         }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [actionData]);
 
     // Scroll to the bottom of the messages list on each entry
