@@ -34,7 +34,6 @@ export async function action({
     request
 }: ActionFunctionArgs) {
     const data = await request.formData();
-    console.log("In action", data.get("message"), data.get("chatId"));
     await db.message.create({
         data: {
             content: data.get("message") as string,
@@ -54,21 +53,29 @@ export async function action({
 export default function ChatId() {
     const { topic, chatId, messages } = useLoaderData<typeof loader>();
     const actionData = useActionData<typeof action>();
+
+    // Reset the form after a successful submission
     const form = useRef<HTMLFormElement>(null);
     useEffect(() => {
-        console.log("In effect", actionData);
         if (actionData?.ok) {
             form.current?.reset();
         }
     }, [actionData]);
 
+    // Scroll to the bottom of the messages list on each entry
+    const messagesEndRef = useRef<HTMLDivElement>(null);
+    useEffect(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, [messages]);
+
     return (
         <>
-            <h3 className="text-2xl">#{topic}</h3>
+            <h3 className="text-2xl border-b-2 border-slate-400">#{topic}</h3>
             <ul className="overflow-y-scroll h-full">
                 {messages.map((message) => (
                     <Message key={message.id} message={message} />
                 ))}
+                <div ref={messagesEndRef} />
             </ul>
             <Form ref={form} method="post" action={`/chat/${chatId}`} className="flex w-full pt-2">
                 <input type="text" name="message" className="p-2 text-xs mr-1 border-2 rounded w-full" />
