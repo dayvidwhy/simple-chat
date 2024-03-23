@@ -9,7 +9,7 @@ export const Navigation = () => {
     ];
 
     return (
-        <nav className="p-2 border-r-2 border-zinc-400">
+        <nav className="p-2 border-r-2 border-zinc-400 w-1/6">
             <ul className="flex flex-col">
                 {routes.map((route, index) => (
                     <li className="mr-6 w-full" key={index}>
