@@ -9,11 +9,11 @@ export const Navigation = () => {
     ];
 
     return (
-        <nav className="p-2 border-b-2 border-zinc-400">
-            <ul className="flex">
+        <nav className="p-2 border-r-2 border-zinc-400">
+            <ul className="flex flex-col">
                 {routes.map((route, index) => (
-                    <li className="mr-6" key={index}>
-                        <Link className="text-blue-500 hover:text-blue-800" to={route.path}>
+                    <li className="mr-6 w-full" key={index}>
+                        <Link className="text-slate-100 my-2 bg-slate-400 hover:bg-slate-700 px-2 block text-center rounded" to={route.path}>
                             {route.name}
                         </Link>
                     </li>
