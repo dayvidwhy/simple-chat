@@ -78,7 +78,7 @@ export default function ChatId() {
                 <div ref={messagesEndRef} />
             </ul>
             <Form ref={form} method="post" action={`/chat/${chatId}`} className="flex w-full pt-2">
-                <input type="text" name="message" className="p-2 text-xs mr-1 border-2 rounded w-full" />
+                <input placeholder={`Message #${topic}`} type="text" name="message" className="p-2 text-xs mr-1 border-2 rounded w-full" />
                 <input type="hidden" name="chatId" value={chatId} />
                 <button type="submit" className="bg-blue-500 w-24 text-sm hover:bg-blue-700 text-white font-bold py-2 rounded">
                     Send
