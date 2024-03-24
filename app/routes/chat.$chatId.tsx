@@ -67,12 +67,17 @@ export default function ChatId() {
     const revalidator = useRevalidator();
     useEffect(() => {
         if (!socket) return;
-        socket.on("message", (data) => {
-            console.log("New message", data);
+        console.log("Subscribing to chat", chatId);
+        socket.on(`message-${chatId}`, (data) => {
+            console.log("New message for current chat", data);
             revalidator.revalidate();
         });
+        return function () {
+            console.log("Unsubscribing from chat", chatId);
+            socket.off(`message-${chatId}`);
+        };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [socket]);
+    }, [socket, chatId]);
     
     // Reset the form after a successful submission
     const form = useRef<HTMLFormElement>(null);
