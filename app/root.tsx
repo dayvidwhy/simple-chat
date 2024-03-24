@@ -4,8 +4,9 @@ import {
     Meta,
     Outlet,
     Scripts,
+    useLoaderData
 } from "@remix-run/react";
-import type { LinksFunction } from "@remix-run/node";
+import type { LinksFunction, LoaderFunctionArgs } from "@remix-run/node";
 import { useEffect, useState } from "react";
 import type { Socket } from "socket.io-client";
 import io from "socket.io-client";
@@ -14,12 +15,21 @@ import io from "socket.io-client";
 import { Navigation } from "@/components/navigation";
 import { SocketProvider } from "@/context";
 import stylesheet from "@/tailwind.css?url";
+import { authenticator } from "./services/auth.server";
 
 export const links: LinksFunction = () => [
     { rel: "stylesheet", href: stylesheet },
 ];
 
+export async function loader({ request }: LoaderFunctionArgs) {
+    const user = await authenticator.isAuthenticated(request);
+    return {
+        authenticated: user ? true : false,
+    };
+}
+
 export default function App() {
+    const { authenticated } = useLoaderData<typeof loader>();
     // setup socket to provide to context
     const [socket, setSocket] = useState<Socket>();
     useEffect(() => {
@@ -46,7 +56,7 @@ export default function App() {
             <body className="h-full">
                 <div className="border border-zinc-400 rounded-sm h-full">
                     <main className="flex h-full">
-                        <Navigation />
+                        <Navigation loggedIn={authenticated} />
                         <SocketProvider socket={socket}>
                             <Outlet />
                         </SocketProvider>

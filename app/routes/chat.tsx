@@ -1,19 +1,30 @@
 import { Outlet, useLoaderData, Form, useNavigate, useParams, useSubmit, useActionData } from "@remix-run/react";
 import { json } from "@remix-run/node";
-import type { ActionFunctionArgs } from "@remix-run/node";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
+import { authenticator } from "@/services/auth.server";
 import { db } from "@/utils/database.server";
 import { Plus } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 
-export async function loader() {
+export async function loader({ request }: LoaderFunctionArgs) {
+    await authenticator.isAuthenticated(request, {
+        failureRedirect: "/login",
+    });
+
     // fetch list of chats
     const chats = await db.chat.findMany();
-    return json(chats);
+    const users = await db.user.findMany();
+    return json({
+        chats,
+        users
+    });
 }
 
 export async function action({
     request
 }: ActionFunctionArgs) {
+    const user = await authenticator.isAuthenticated(request);
+
     const data = await request.formData();
     const topic = data.get("topic");
     if (topic === "") {
@@ -25,6 +36,11 @@ export async function action({
     const createdChat = await db.chat.create({
         data: {
             topic: topic as string,
+            user: {
+                connect: {
+                    id: user.id as string,
+                },
+            }
         },
     });
     return json({
@@ -34,7 +50,7 @@ export async function action({
 };
 
 export default function Chat () {
-    const chats = useLoaderData<typeof loader>();
+    const { chats, users } = useLoaderData<typeof loader>();
     const currentParams = useParams();
     const [currentChatId, setCurrentChatId] = useState<string>(currentParams.chatId || "");
     
@@ -96,8 +112,20 @@ export default function Chat () {
                     ))}
                 </ul>
             </aside>
-            <section className="w-10/12 h-full flex flex-col border-l border-zinc-400 justify-between">
+            <section className="w-8/12 h-full flex flex-col border-l border-zinc-400 justify-between">
                 <Outlet />
+            </section>
+            <section className="w-2/12 h-full flex flex-col border-l border-zinc-400">
+                <h3 className="text-lg border-b font-bold border-slate-400 p-2 bg-slate-100">Users</h3>
+                <ul className="overflow-y-auto w-full">
+                    {users.map((user) => (
+                        <li className="text-slate-600 hover:bg-slate-200 hover:text-slate-800" key={user.id}>
+                            <button className="block px-2 py-1 w-full text-left">
+                                {user.name}
+                            </button>
+                        </li>
+                    ))}
+                </ul>
             </section>
         </>
     );

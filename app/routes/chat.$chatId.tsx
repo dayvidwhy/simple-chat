@@ -5,8 +5,9 @@ import {
     useActionData,
     useRevalidator
 } from "@remix-run/react";
-import type { ActionFunctionArgs } from "@remix-run/node";
+import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
+import { authenticator } from "@/services/auth.server";
 import { useRef, useEffect } from "react";
 import { SendHorizonal, Hash } from "lucide-react";
 
@@ -16,12 +17,13 @@ import { Message } from "@/components/message";
 import { useSocket } from "@/context";
 
 export async function loader({
-    params
-}: {
-    params: {
-        chatId: string;
-    }
-}) {
+    params,
+    request
+}: LoaderFunctionArgs) {
+    await authenticator.isAuthenticated(request, {
+        failureRedirect: "/login",
+    });
+
     // fetch chat for the id to show topic
     const chats = await db.chat.findUnique({
         where: { id: params.chatId }
@@ -42,10 +44,18 @@ export async function loader({
 export async function action({
     request
 }: ActionFunctionArgs) {
+    const user = await authenticator.isAuthenticated(request);
+    console.log(user);
     const data = await request.formData();
     const created = await db.message.create({
         data: {
             content: data.get("message") as string,
+            createdBy: user.name as string,
+            user: {
+                connect: {
+                    id: user.id as string,
+                },
+            },
             chat: {
                 connect: {
                     id: data.get("chatId") as string,

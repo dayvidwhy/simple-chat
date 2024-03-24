@@ -13,6 +13,8 @@ datasource db {
 model Chat {
   id       String   @id @default(cuid())
   topic    String
+  userId   String
+  user     User     @relation(fields: [userId], references: [id])
   messages Message[]
 }
 
@@ -20,6 +22,17 @@ model Message {
   id        String @id @default(cuid())
   content   String
   chatId    String
+  userId    String
+  createdBy String
   createdAt DateTime @default(now())
+  user      User   @relation(fields: [userId], references: [id])
   chat      Chat   @relation(fields: [chatId], references: [id])
+}
+
+model User {
+  id       String   @id @default(cuid())
+  name     String
+  email    String
+  chats    Chat[]
+  messages Message[]
 }

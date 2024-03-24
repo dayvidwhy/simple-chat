@@ -4,13 +4,21 @@ import {
 } from "@remix-run/react";
 import {
     Home,
-    MessageSquareQuote
+    MessageSquareQuote,
+    LogIn,
+    LogOut
 } from "lucide-react";
 
-export const Navigation = () => {
+export const Navigation = ({ loggedIn }: {
+    loggedIn: boolean;
+}) => {
     const routes = [
         { icon: Home, path: "/" },
-        { icon: MessageSquareQuote, path: "/chat" },
+        { 
+            icon: loggedIn ? LogOut : LogIn,
+            path: loggedIn ? "/logout": "/login"
+        },
+        { icon: MessageSquareQuote, path: "/chat" }
     ];
 
     const location = useLocation();
