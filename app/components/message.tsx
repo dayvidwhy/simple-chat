@@ -7,18 +7,18 @@ export const Message = ({ message }: {
         createdAt: string;
     }
 }) => {
-    const timeStamp = format(new Date(message.createdAt), "pp");
+    const timeStamp = format(new Date(message.createdAt), "p");
     return (
-        <li key={message.id} className="p-2 w-full flex">
-            <div className="text-sm text-slate-600 mr-2">
-                <span>
-                    {timeStamp.slice(0, timeStamp.length - 2)}{" "}
+        <li key={message.id} className="p-2 w-full flex flex-col">
+            <div className="mr-2">
+                <span className="text-xs text-slate-600 ">
+                    {timeStamp}{" "}
                 </span>
             </div>
             <div className="text-wrap overflow-x-hidden">
-                <p>
+                <span className="text-md">
                     {message.content}
-                </p>
+                </span>
             </div>
         </li>
     );
