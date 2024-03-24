@@ -135,7 +135,7 @@ export default function ChatId() {
                 method="post"
                 action={`/chat/${chatId}`}
                 className="flex w-full p-2">
-                <input placeholder={`Message #${topic}`} type="text" name="message" className="px-4 py-2 bg-slate-50 text-md mr-1 border rounded w-full" />
+                <input autoComplete="off" placeholder={`Message #${topic}`} type="text" name="message" className="px-4 py-2 bg-slate-50 text-md mr-1 border rounded w-full" />
                 <input type="hidden" name="chatId" value={chatId} />
                 <button type="submit" className="bg-blue-500 w-fit hover:bg-blue-700 text-white font-bold p-2 px-4 rounded">
                     <SendHorizonal />
