@@ -8,7 +8,7 @@ import {
 import type { ActionFunctionArgs } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { useRef, useEffect } from "react";
-import { SendHorizonal } from "lucide-react";
+import { SendHorizonal, Hash } from "lucide-react";
 
 // local libs
 import { db } from "@/utils/database.server";
@@ -110,7 +110,10 @@ export default function ChatId() {
 
     return (
         <>
-            <h3 className="text-xl bg-slate-100 border-b border-slate-400 p-2">#{topic}</h3>
+            <h3 className="bg-slate-100 border-b border-slate-400 p-2">
+                <span><Hash className="inline-block text-slate-400" /></span>
+                <span className="pl-2 text-lg">{topic?.toLocaleLowerCase().split(" ").join("-")}</span>
+            </h3>
             <ul className="overflow-y-auto h-full">
                 {messages.map((message) => (
                     <Message key={message.id} message={message} />
@@ -118,9 +121,9 @@ export default function ChatId() {
                 <div ref={messagesEndRef} />
             </ul>
             <Form ref={form} method="post" action={`/chat/${chatId}`} className="flex w-full p-2">
-                <input placeholder={`Message #${topic}`} type="text" name="message" className="p-2 text-xs mr-1 border rounded w-full" />
+                <input placeholder={`Message #${topic}`} type="text" name="message" className="px-4 py-2 bg-slate-50 text-md mr-1 border rounded w-full" />
                 <input type="hidden" name="chatId" value={chatId} />
-                <button type="submit" className="bg-blue-500 w-fit text-sm hover:bg-blue-700 text-white font-bold p-2 px-4 rounded">
+                <button type="submit" className="bg-blue-500 w-fit hover:bg-blue-700 text-white font-bold p-2 px-4 rounded">
                     <SendHorizonal />
                 </button>
             </Form>

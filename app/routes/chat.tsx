@@ -63,7 +63,7 @@ export default function Chat () {
     return (
         <>
             <aside className="w-2/12 h-full flex flex-col bg-slate-100">
-                <h3 className="text-xl border-b font-bold border-slate-400 p-2">Channels</h3>
+                <h3 className="text-lg border-b font-bold border-slate-400 p-2">Channels</h3>
                 <Form ref={form} onSubmit={createNewChat} method="post" action="/chat" className="flex w-full p-2">
                     <input type="text" placeholder="Create.." name="topic" className="p-2 text-xs w-full mr-1 border" />
                     <button type="submit" className="bg-blue-500 w-fit px-2 hover:bg-blue-700 text-white rounded">
@@ -76,7 +76,7 @@ export default function Chat () {
                             <button onClick={() => {
                                 setCurrentChatId(chat.id);
                                 navigate(`/chat/${chat.id}`);
-                            }} className="block px-2 py-1 w-full text-left">#{chat.topic}</button>
+                            }} className="block px-2 py-1 w-full text-left">#{chat.topic?.toLocaleLowerCase().split(" ").join("-")}</button>
                         </li>
                     ))}
                 </ul>
