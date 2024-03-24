@@ -22,7 +22,7 @@ export default function Chat () {
                 <Form method="post" action="/chat" className="flex w-full p-2">
                     <input type="text" placeholder="Create.." name="topic" className="p-2 text-xs w-full mr-1 border" />
                     <button type="submit" className="bg-blue-500 w-fit px-2 hover:bg-blue-700 text-white rounded">
-                        <Plus />    
+                        <Plus />
                     </button>
                 </Form>
                 <ul className="overflow-y-auto w-full">
@@ -55,4 +55,4 @@ export async function action({
     return json({
         message: "Created",
     });
-}
+};
