@@ -13,11 +13,17 @@ export const Navigation = () => {
     ];
 
     return (
-        <nav className="p-2 border-r border-zinc-400 bg-gray-100">
+        <nav className="border-r border-zinc-400 bg-gray-100">
             <ul className="flex flex-col">
                 {routes.map((route, index) => (
-                    <li className="mr-6 w-full flex flex-row justify-center" key={index}>
-                        <Link className="text-slate-100 mb-2 bg-slate-400 hover:bg-slate-700 p-3 rounded-2xl" to={route.path}>
+                    <li className="w-full flex flex-row justify-center" key={index}>
+                        <Link className="
+                            border-l-4
+                            border-slate-400
+                            hover:border-slate-700
+                            text-slate-400
+                            hover:text-slate-700
+                            p-3" to={route.path}>
                             <route.icon />
                         </Link>
                     </li>
