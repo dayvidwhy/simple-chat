@@ -18,8 +18,11 @@ export const Navigation = ({ loggedIn }: {
             icon: loggedIn ? LogOut : LogIn,
             path: loggedIn ? "/logout": "/login"
         },
-        { icon: MessageSquareQuote, path: "/chat" }
     ];
+
+    if (loggedIn) {
+        routes.splice(1, 0, { icon: MessageSquareQuote, path: "/chat" });
+    }
 
     const location = useLocation();
 
