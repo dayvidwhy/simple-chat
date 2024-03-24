@@ -43,8 +43,8 @@ export default function App() {
                 <Meta />
                 <Links />
             </head>
-            <body className="h-full p-2">
-                <div className="container mx-auto border-2 border-zinc-400 rounded-sm h-full">
+            <body className="h-full">
+                <div className="border border-zinc-400 rounded-sm h-full">
                     <main className="flex h-full">
                         <Navigation />
                         <SocketProvider socket={socket}>

@@ -13,10 +13,10 @@ export default function Chat () {
     const chats = useLoaderData<typeof loader>();
     return (
         <>
-            <aside className="w-2/12 h-full flex flex-col">
-                <h3 className="text-xl border-b-2 font-bold border-slate-400 p-2">Channels</h3>
+            <aside className="w-2/12 h-full flex flex-col bg-slate-100">
+                <h3 className="text-xl border-b font-bold border-slate-400 p-2">Channels</h3>
                 <Form method="post" action="/chat" className="flex w-full p-2">
-                    <input type="text" placeholder="Create.." name="topic" className="p-2 text-xs w-full mr-1 border-2" />
+                    <input type="text" placeholder="Create.." name="topic" className="p-2 text-xs w-full mr-1 border" />
                     <button type="submit" className="bg-blue-500 w-fit px-2 hover:bg-blue-700 text-white rounded">
                         <Plus />    
                     </button>
@@ -29,7 +29,7 @@ export default function Chat () {
                     ))}
                 </ul>
             </aside>
-            <section className="w-9/12 h-full flex flex-col border-l-2 border-zinc-400 justify-between">
+            <section className="w-10/12 h-full flex flex-col border-l border-zinc-400 justify-between">
                 <Outlet />
             </section>
         </>
