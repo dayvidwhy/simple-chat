@@ -9,4 +9,3 @@ module.exports = {
     publicPath: "/build/",
     serverBuildPath: "build/index.js",
 };
-  
