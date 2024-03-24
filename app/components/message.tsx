@@ -1,4 +1,4 @@
-import { format } from "date-fns";
+import { format, isToday, isYesterday } from "date-fns";
 
 export const Message = ({ message }: {
     message: {
@@ -8,7 +8,8 @@ export const Message = ({ message }: {
         createdBy: string;
     }
 }) => {
-    const timeStamp = format(new Date(message.createdAt), "p");
+    const date = new Date(message.createdAt);
+    const timeStamp = format(date, "p");
     return (
         <li key={message.id} className="p-2 w-full flex flex-col">
             <div>
@@ -16,7 +17,13 @@ export const Message = ({ message }: {
                     {message.createdBy}
                 </span>
                 <span className="text-xs text-slate-600 ">
-                    {timeStamp}{" "}
+                    {`${
+                        isToday(date) ?
+                            `Today at ${timeStamp}` :
+                            isYesterday(date) ?
+                                `Yesterday at ${timeStamp}` :
+                                `${format(date, "P")} ${timeStamp}`
+                    }`}
                 </span>
             </div>
             <div className="text-wrap overflow-x-hidden">
