@@ -64,7 +64,12 @@ export default function Chat () {
         <>
             <aside className="w-2/12 h-full flex flex-col bg-slate-100">
                 <h3 className="text-lg border-b font-bold border-slate-400 p-2">Channels</h3>
-                <Form ref={form} onSubmit={createNewChat} method="post" action="/chat" className="flex w-full p-2">
+                <Form
+                    ref={form}
+                    onSubmit={createNewChat}
+                    method="post"
+                    action="/chat"
+                    className="flex w-full p-2">
                     <input type="text" placeholder="Create.." name="topic" className="p-2 text-xs w-full mr-1 border" />
                     <button type="submit" className="bg-blue-500 w-fit px-2 hover:bg-blue-700 text-white rounded">
                         <Plus />
@@ -72,11 +77,21 @@ export default function Chat () {
                 </Form>
                 <ul className="overflow-y-auto w-full">
                     {chats.map((chat) => (
-                        <li className={`cursor-pointer text-slate-400 hover:text-slate-800 ${chat.id === currentChatId ? "bg-slate-200 text-slate-600" : ""}`} key={chat.id}>
-                            <button onClick={() => {
-                                setCurrentChatId(chat.id);
-                                navigate(`/chat/${chat.id}`);
-                            }} className="block px-2 py-1 w-full text-left">#{chat.topic?.toLocaleLowerCase().split(" ").join("-")}</button>
+                        <li className={`
+                            cursor-pointer 
+                            text-slate-600 
+                            ${chat.id === currentChatId ? "" : "hover:bg-slate-200"}
+                            hover:text-slate-800 
+                            ${chat.id === currentChatId ? "bg-slate-300 text-slate-800" : ""}
+                        `} key={chat.id}>
+                            <button
+                                onClick={() => {
+                                    setCurrentChatId(chat.id);
+                                    navigate(`/chat/${chat.id}`);
+                                }}
+                                className="block px-2 py-1 w-full text-left">
+                                #{chat.topic?.toLocaleLowerCase().split(" ").join("-")}
+                            </button>
                         </li>
                     ))}
                 </ul>
