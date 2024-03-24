@@ -43,7 +43,7 @@ export async function action({
     request
 }: ActionFunctionArgs) {
     const data = await request.formData();
-    await db.message.create({
+    const created = await db.message.create({
         data: {
             content: data.get("message") as string,
             chat: {
@@ -53,9 +53,12 @@ export async function action({
             }
         },
     });
+    console.log(created);
 
     return json({
-        ok: true
+        ok: true,
+        id: created.id,
+        createdAt: created.createdAt
     });
 }
 
@@ -86,7 +89,13 @@ export default function ChatId() {
         if (actionData?.ok) {
             if (form.current !== null) {
                 const formData = new FormData(form.current);
-                socket?.emit("message", { chatId, message: formData.get("message") });
+                const message = { 
+                    chatId,
+                    content: formData.get("message"),
+                    createdAt: actionData.createdAt,
+                    id: actionData.id
+                };
+                socket?.emit("message", message);
             }
             form.current?.reset();
         }
