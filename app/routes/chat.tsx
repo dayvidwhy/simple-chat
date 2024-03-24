@@ -1,8 +1,9 @@
-import { Outlet, useLoaderData, Form, Link } from "@remix-run/react";
+import { Outlet, useLoaderData, Form, useNavigate, useParams } from "@remix-run/react";
 import { json } from "@remix-run/node";
 import type { ActionFunctionArgs } from "@remix-run/node";
 import { db } from "@/utils/database.server";
 import { Plus } from "lucide-react";
+import { useState } from "react";
 
 export async function loader() {
     const chats = await db.chat.findMany();
@@ -11,6 +12,9 @@ export async function loader() {
 
 export default function Chat () {
     const chats = useLoaderData<typeof loader>();
+    const currentParams = useParams();
+    const [currentChatId, setCurrentChatId] = useState<string>(currentParams.chatId || "");
+    const navigate = useNavigate();
     return (
         <>
             <aside className="w-2/12 h-full flex flex-col bg-slate-100">
@@ -21,10 +25,13 @@ export default function Chat () {
                         <Plus />    
                     </button>
                 </Form>
-                <ul className="m-1 overflow-y-auto w-full px-2 pb-2">
+                <ul className="overflow-y-auto w-full">
                     {chats.map((chat) => (
-                        <li className="cursor-pointer text-slate-400 hover:text-slate-800 mb-2" key={chat.id}>
-                            <Link className="block" to={`/chat/${chat.id}`}>#{chat.topic}</Link>
+                        <li className={`cursor-pointer text-slate-400 hover:text-slate-800 ${chat.id === currentChatId ? "bg-slate-200 text-slate-600" : ""}`} key={chat.id}>
+                            <button onClick={() => {
+                                setCurrentChatId(chat.id);
+                                navigate(`/chat/${chat.id}`);
+                            }} className="block px-2 py-1 w-full text-left">#{chat.topic}</button>
                         </li>
                     ))}
                 </ul>
