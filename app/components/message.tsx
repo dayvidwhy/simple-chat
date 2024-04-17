@@ -16,7 +16,7 @@ export const Message = ({ message }: {
                 <span className="text-slate-800 font-bold mr-2">
                     {message.createdBy}
                 </span>
-                <span className="text-xs text-slate-600 ">
+                <span className="text-xs text-slate-600">
                     {`${
                         isToday(date) ?
                             `Today at ${timeStamp}` :
