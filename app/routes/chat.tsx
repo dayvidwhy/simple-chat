@@ -24,6 +24,12 @@ export async function action({
     request
 }: ActionFunctionArgs) {
     const user = await authenticator.isAuthenticated(request);
+    if (!user) {
+        return json({
+            message: "Authentication failed",
+            id: ""
+        });
+    }
 
     const data = await request.formData();
     const topic = data.get("topic");
@@ -33,12 +39,19 @@ export async function action({
             id: ""
         });
     }
+
+    if (typeof topic !== "string") {
+        return json({
+            message: "Invalid payload",
+            id: ""
+        });
+    }
     const createdChat = await db.chat.create({
         data: {
-            topic: topic as string,
+            topic: topic,
             user: {
                 connect: {
-                    id: user.id as string,
+                    id: user.id,
                 },
             }
         },
