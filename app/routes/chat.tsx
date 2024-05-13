@@ -25,40 +25,48 @@ export async function action({
 }: ActionFunctionArgs) {
     const user = await authenticator.isAuthenticated(request);
     if (!user) {
-        return json({
-            message: "Authentication failed",
-            id: ""
+        return new Response("Unauthorized", {
+            status: 401,
+            statusText: "Unauthorized",
         });
     }
 
     const data = await request.formData();
     const topic = data.get("topic");
-    if (topic === "") {
-        return json({
-            message: "Empty topic not allowed",
-            id: ""
+    if (topic === "" || typeof topic !== "string") {
+        return new Response("Empty topic not allowed", {
+            status: 400,
+            statusText: "Bad Request",
         });
     }
 
-    if (typeof topic !== "string") {
-        return json({
-            message: "Invalid payload",
-            id: ""
+    let createdChat;
+    try {
+        createdChat = await db.chat.create({
+            data: {
+                topic: topic,
+                user: {
+                    connect: {
+                        id: user.id,
+                    },
+                }
+            },
+        });
+    } catch (error) {
+        return new Response("Failed to create chat", {
+            status: 500,
+            statusText: "Internal Server Error",
         });
     }
-    const createdChat = await db.chat.create({
-        data: {
-            topic: topic,
-            user: {
-                connect: {
-                    id: user.id,
-                },
-            }
-        },
-    });
-    return json({
-        message: "Created",
+
+    return new Response(JSON.stringify({
         id: createdChat.id
+    }), {
+        status: 201,
+        statusText: "Created",
+        headers: {
+            "Content-Type": "application/json"
+        }
     });
 };
 
@@ -81,9 +89,12 @@ export default function Chat () {
     const submit = useSubmit();
     const form = useRef<HTMLFormElement>(null);
     const createNewChat = (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
         if (form.current === null) return;
         const formData = new FormData(form.current);
-        if (formData.get("topic") === "") {
+        const topic = formData.get("topic");
+        console.log(topic);
+        if (topic === "") {
             return;
         }
         submit(event.currentTarget);

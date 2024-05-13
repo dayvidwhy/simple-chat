@@ -3,10 +3,10 @@ import {
     useLoaderData,
     Form,
     useActionData,
-    useRevalidator
+    useRevalidator,
+    useSubmit
 } from "@remix-run/react";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
-import { json } from "@remix-run/node";
 import { authenticator } from "@/services/auth.server";
 import { useRef, useEffect } from "react";
 import { SendHorizonal, Hash } from "lucide-react";
@@ -45,30 +45,60 @@ export async function action({
     request
 }: ActionFunctionArgs) {
     const user = await authenticator.isAuthenticated(request);
-    console.log(user);
-    const data = await request.formData();
-    const created = await db.message.create({
-        data: {
-            content: data.get("message") as string,
-            createdBy: user.name as string,
-            user: {
-                connect: {
-                    id: user.id as string,
-                },
-            },
-            chat: {
-                connect: {
-                    id: data.get("chatId") as string,
-                },
-            }
-        },
-    });
-    console.log(created);
+    if (!user) {
+        return new Response("Unauthorized", {
+            status: 401,
+            statusText: "Unauthorized",
+        });
+    }
 
-    return json({
+    const data = await request.formData();
+    const message = data.get("message");
+    const chatId = data.get("chatId");
+    if (
+        message === "" || typeof message !== "string" ||
+        chatId === "" || typeof chatId !== "string"
+    ) {
+        return new Response("Empty message not allowed", {
+            status: 400,
+            statusText: "Bad Request",
+        });
+    }
+
+    let createdChatResult;
+    try {
+        createdChatResult = await db.message.create({
+            data: {
+                content: message,
+                createdBy: user.name,
+                user: {
+                    connect: {
+                        id: user.id,
+                    },
+                },
+                chat: {
+                    connect: {
+                        id: chatId,
+                    },
+                }
+            },
+        });
+    } catch (error) {
+        return new Response("Failed to create chat", {
+            status: 500,
+            statusText: "Internal Server Error",
+        });
+    }
+
+    return new Response(JSON.stringify({
         ok: true,
-        id: created.id,
-        createdAt: created.createdAt
+        id: createdChatResult.id,
+        createdAt: createdChatResult.createdAt
+    }), {
+        status: 201,
+        headers: {
+            "Content-Type": "application/json"
+        }
     });
 }
 
@@ -118,6 +148,18 @@ export default function ChatId() {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
 
+    const submit = useSubmit();
+    const submitNewMessage = (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        if (form.current === null) return;
+        const formData = new FormData(form.current);
+        const message = formData.get("message");
+        if (message === "") {
+            return;
+        }
+        submit(event.currentTarget);
+    };
+
     return (
         <>
             <h3 className="bg-slate-100 border-b border-slate-400 p-2">
@@ -133,6 +175,7 @@ export default function ChatId() {
             <Form
                 ref={form}
                 method="post"
+                onSubmit={submitNewMessage}
                 action={`/chat/${chatId}`}
                 className="flex w-full p-2">
                 <input autoComplete="off" placeholder={`Message #${topic}`} type="text" name="message" className="px-4 py-2 bg-slate-50 text-md mr-1 border rounded w-full" />
