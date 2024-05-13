@@ -49,6 +49,7 @@ const build = viteDevServer
         )
     : await import("./build/server/index.js");
 
+// @ts-expect-error See https://github.com/remix-run/remix/issues/8343
 app.all("*", createRequestHandler({ build }));
 
 const PORT = process.env.PORT || 3000;
