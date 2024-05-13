@@ -36,7 +36,7 @@ io.on("connection", (socket) => {
 
     // when we get a message, relay to other clients
     socket.on("message", (data) => {
-        console.log("Received message: ", data.message);
+        console.log("Received message: ", data.content);
         console.log("Broadcasting to chatId: ", data.chatId);
         socket.broadcast.emit(`message-${data.chatId}`, data);
     });
