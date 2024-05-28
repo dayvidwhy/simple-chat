@@ -1,5 +1,15 @@
 import { format, isToday, isYesterday } from "date-fns";
 
+const formatTimeAgo = (createdAt: string) => {
+    const date = new Date(createdAt);
+    const timeStamp = format(date, "p");
+    return isToday(date) ?
+        `Today at ${timeStamp}` :
+        isYesterday(date) ?
+            `Yesterday at ${timeStamp}` :
+            `${format(date, "P")} ${timeStamp}`;
+};
+
 export const Message = ({ message }: {
     message: {
         id: string;
@@ -8,8 +18,7 @@ export const Message = ({ message }: {
         createdBy: string;
     }
 }) => {
-    const date = new Date(message.createdAt);
-    const timeStamp = format(date, "p");
+    const timeAgo = formatTimeAgo(message.createdAt);
     return (
         <li key={message.id} className="p-2 w-full flex flex-col">
             <div>
@@ -17,13 +26,7 @@ export const Message = ({ message }: {
                     {message.createdBy}
                 </span>
                 <span className="text-xs text-slate-600">
-                    {`${
-                        isToday(date) ?
-                            `Today at ${timeStamp}` :
-                            isYesterday(date) ?
-                                `Yesterday at ${timeStamp}` :
-                                `${format(date, "P")} ${timeStamp}`
-                    }`}
+                    {timeAgo}
                 </span>
             </div>
             <div className="text-wrap overflow-x-hidden">
