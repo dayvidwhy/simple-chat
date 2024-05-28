@@ -162,7 +162,7 @@ export default function ChatId() {
 
     return (
         <>
-            <h3 className="bg-slate-100 border-b border-slate-400 p-2">
+            <h3 className="bg-slate-100 border-b border-slate-400 p-2 flex align-middle">
                 <span><Hash className="inline-block text-slate-400" /></span>
                 <span className="pl-2 text-lg">{topic?.toLocaleLowerCase().split(" ").join("-")}</span>
             </h3>
