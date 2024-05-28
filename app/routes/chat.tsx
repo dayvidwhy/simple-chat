@@ -102,7 +102,7 @@ export default function Chat () {
 
     return (
         <>
-            <aside className="w-2/12 h-full flex flex-col bg-slate-100">
+            <aside className="h-full w-40 flex-col bg-slate-100">
                 <h3 className="text-lg border-b font-bold border-slate-400 p-2">Channels</h3>
                 <Form
                     ref={form}
@@ -136,10 +136,10 @@ export default function Chat () {
                     ))}
                 </ul>
             </aside>
-            <section className="w-8/12 h-full flex flex-col border-l border-zinc-400 justify-between">
+            <section className="h-full flex-1 flex flex-col border-l border-zinc-400 justify-between">
                 <Outlet />
             </section>
-            <section className="w-2/12 h-full flex flex-col border-l border-zinc-400">
+            <section className="w-40 h-full flex flex-col border-l border-zinc-400">
                 <h3 className="text-lg border-b font-bold border-slate-400 p-2 bg-slate-100">Users</h3>
                 <ul className="overflow-y-auto w-full">
                     {users.map((user) => (
