@@ -15,6 +15,8 @@ import { SendHorizonal, Hash } from "lucide-react";
 import { db } from "@/utils/database.server";
 import { Message } from "@/components/message";
 import { useSocket } from "@/context";
+import { getSession } from "@/services/session.server";
+import jwt from "jsonwebtoken";
 
 export async function loader({
     params,
@@ -34,10 +36,26 @@ export async function loader({
         where: { chatId: params.chatId }
     });
 
+    // create a new token for the user
+    const session = await getSession(
+        request.headers.get("Cookie")
+    );
+    const userId = session.get("user").id;
+
+    // create the token we're going to use for the socket
+    // we pass this in via the loader data
+    // the server is then going to use this token to authenticate the socket
+    const token = jwt.sign({
+        user: userId,
+    }, process.env.SOCKET_AUTH_SECRET as string, {
+        expiresIn: "1h"
+    });
+
     return {
         chatId: params.chatId,
         topic: chats?.topic,
-        messages
+        messages,
+        token
     };
 };
 
@@ -103,10 +121,15 @@ export async function action({
 }
 
 export default function ChatId() {
-    const { topic, chatId, messages } = useLoaderData<typeof loader>();
+    const { topic, chatId, messages, token } = useLoaderData<typeof loader>();
 
     // listen to new messages
     const socket = useSocket();
+
+    // set the token for the socket
+    if (socket) {
+        socket.auth = { token };
+    }
     const revalidator = useRevalidator();
     useEffect(() => {
         if (!socket) return;

@@ -1,5 +1,6 @@
 // remix server
 import { createRequestHandler } from "@remix-run/express";
+import jwt from "jsonwebtoken";
 
 // server libs
 import express from "express";
@@ -30,6 +31,19 @@ const io = new Server(httpServer);
 
 // listen for the client connecting to the WS server
 io.on("connection", (socket) => {
+    const token = socket.handshake?.auth?.token;
+    if (!token) {
+        return socket.disconnect(true);
+    }
+
+    // verify the token
+    try {
+        jwt.verify(token, process.env.SOCKET_AUTH_SECRET as string);
+        console.log("Token verified");
+    } catch (e) {
+        return socket.disconnect(true);
+    }
+
     // inside WS connection per client
     console.log(socket.id, "connected");
     socket.emit("confirmation", "connected!");
@@ -58,4 +72,3 @@ const PORT = process.env.PORT || 3000;
 httpServer.listen(PORT, () => {
     console.log(`Express server listening on port ${PORT}`);
 });
-  
